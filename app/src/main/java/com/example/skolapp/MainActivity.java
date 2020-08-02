@@ -2,6 +2,7 @@ package com.example.skolapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,25 +38,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button addPayment = findViewById(R.id.addPayment);
+        Button toPayment = findViewById(R.id.toPayment);
         textView = findViewById(R.id.textView);
         queue = Volley.newRequestQueue(this);
         updateValue();
-        addPayment.setOnClickListener(new View.OnClickListener() {
+        toPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendPayment(30.4, "sample payment", new VolleyCallBack() {
-                    @Override
-                    public void onSuccess() {
-                        updateValue();
-                    }
-                });
+                Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
+                startActivity(intent);
             }
         });
     }
     public void updateValue(){
-        igSumaArr = new ArrayList<>();
-        gabSumaArr = new ArrayList<>();
         getSkol(new VolleyCallBack() {
             @Override
             public void onSuccess() {
@@ -63,10 +58,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    //padaryt su callbacku lol
     public void setSkolValue(){
+
         Log.i("sumarr", Integer.toString(gabSumaArr.size()));
-        double igSum = 0;
-        double gabSum = 0;
+        float igSum = 0;
+        float gabSum = 0;
         for (Double i : igSumaArr){
             igSum += i;
             Log.i("paymentsIg", i.toString());
@@ -79,37 +76,23 @@ public class MainActivity extends AppCompatActivity {
         Log.i("igValue", Double.toString(igSum));
         gabSum = gabSum / 2;
         Log.i("gabValue", Double.toString(gabSum));
-        double kof = igSum - gabSum;
-        textView.setText(format.format(kof));
+        float kof = igSum - gabSum;
         if (kof > 0){
+            textView.setText(format.format(igSum - gabSum));
             textView.setTextColor(Color.GREEN);
         }
         else if (kof < 0){
+            textView.setText(format.format(igSum - gabSum));
             textView.setTextColor(Color.RED);
         }
     }
 
-    public void sendPayment(double ammount, String description, final VolleyCallBack volleyCallBack){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/ignas&" +ammount +'&' + description  ,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this, "Added payment of 30.4 euros", Toast.LENGTH_SHORT).show();
-                        volleyCallBack.onSuccess();
-                        // Display the first 500 characters of the response string.
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Payment adding unsuccessful", Toast.LENGTH_SHORT).show();
-                Log.i("Error", error.toString());
-            }
-        });
-        queue.add(stringRequest);
-    }
+
     //istraukia istorija ir suupdatina kad rodytu skola.
     //** not finished **
     public void getSkol(final VolleyCallBack volleyCallBack){
+        igSumaArr = new ArrayList<>();
+        gabSumaArr = new ArrayList<>();
         // Request a string response from the provided URL.
         StringRequest stringRequestIg = new StringRequest(Request.Method.GET, url + "ignas",
                 new Response.Listener<String>() {
