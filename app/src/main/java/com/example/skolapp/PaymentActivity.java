@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,28 +25,31 @@ public class PaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         Button addPayment = findViewById(R.id.toPayment);
+        final EditText amountView = findViewById(R.id.amount);
+        final EditText descriptionView = findViewById(R.id.description);
         queue = Volley.newRequestQueue(this);
         final Intent toMain = new Intent(this, MainActivity.class);
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendPayment(23, "rimi", new MainActivity.VolleyCallBack() {
+                final Double amount = Double.parseDouble(amountView.getText().toString());
+                String description = descriptionView.getText().toString();
+                sendPayment(amount, description, new VolleyCallBackNoValue(){
                     @Override
                     public void onSuccess() {
-                        Toast.makeText(PaymentActivity.this, "Payment of " + 23 + " euros added.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PaymentActivity.this, "Added payment of " + amount + " euros", Toast.LENGTH_SHORT).show();
                         startActivity(toMain);
                     }
                 });
             }
         });
     }
-    public void sendPayment(double ammount, String description, final MainActivity.VolleyCallBack volleyCallBack){
+    public void sendPayment(double ammount, String description, final VolleyCallBackNoValue volleyCallBack){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/ignas&" +ammount +'&' + description  ,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         volleyCallBack.onSuccess();
-                        // Display the first 500 characters of the response string.
                     }
                 }, new Response.ErrorListener() {
             @Override
