@@ -1,13 +1,9 @@
 package com.example.skolapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,23 +17,26 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-
-
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     final String url ="http://94.237.45.148:1176/";
-    public TextView skolaView;
+    TextView skolaView;
+    TextView thisMonthSpending;
+    TextView currentMonth;
     RequestQueue queue;
     ArrayList<Double> igSumaArr;
     ArrayList<Double> gabSumaArr;
     DecimalFormat format = new DecimalFormat("0.00");
 
-    //TODO: padaryt kiek si men isleista
+    //TODO: parodyt kuris menuo(Spendings in August)
     //TODO: padaryt kad rodytu ataskaita pirkiniu
-    //TODO: padaryt kad jei ne skola tai neleidzia skola grazint
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,17 +44,22 @@ public class MainActivity extends AppCompatActivity {
         Button toPayment = findViewById(R.id.toPayment);
         final SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         skolaView = findViewById(R.id.textView);
+        thisMonthSpending = findViewById(R.id.thisMonthSpending);
+        currentMonth = findViewById(R.id.monthTitle);
         queue = Volley.newRequestQueue(this);
         updateValue(new VolleyCallBackNoValue() {
             @Override
             public void onSuccess() {
-                skolaView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        OnSkolRemoveDialogue dialogue = new OnSkolRemoveDialogue();
-                        dialogue.show(getSupportFragmentManager(), "RemoveSkol");
-                    }
-                });
+                if (Float.parseFloat(skolaView.getText().toString()) < 0){
+                    skolaView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            OnSkolRemoveDialogue dialogue = new OnSkolRemoveDialogue();
+                            dialogue.show(getSupportFragmentManager(), "RemoveSkol");
+                            return true;
+                        }
+                    });
+                }
             }
         });
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -63,9 +67,7 @@ public class MainActivity extends AppCompatActivity {
             public void onRefresh() {
                 updateValue(new VolleyCallBackNoValue() {
                     @Override
-                    public void onSuccess() {
-
-                    }
+                    public void onSuccess() {}
                 });
                 refreshLayout.setRefreshing(false);
             }
@@ -88,27 +90,23 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(float value) {
                         double kof = igSum - value;
                         kof = Math.round(kof * 100.0) / 100.0;
-                        if (kof >= 0){
-                            //green
-                            skolaView.setTextColor(Color.parseColor("#9AEF83"));
-                        }
-                        else if (kof < 0){
-                            //raudona
-                            skolaView.setTextColor(Color.parseColor("#FD8787"));
-                        }
                         skolaView.setText(format.format(kof));
                         volleyCallBack.onSuccess();
                     }
                 });
             }
         });
+        getTotalSpendings(new VolleyCallBack() {
+            @Override
+            public void onSuccess(float value) {
+                DateFormat dateFormat = new SimpleDateFormat("MMMM");
+                currentMonth.setText("Spendings in " + dateFormat.format(Calendar.getInstance().getTime()) + ":");
+                thisMonthSpending.setText(Float.toString(value));
+            }
+        });
     }
-
-    //istraukia istorija ir suupdatina kad rodytu skola.
-    //** not finished **
     public void getSkolIg(final VolleyCallBack volleyCallBack){
         igSumaArr = new ArrayList<>();
-        // Request a string response from the provided URL.
         StringRequest stringRequestIg = new StringRequest(Request.Method.GET, url + "ignas",
                 new Response.Listener<String>() {
                     @Override
@@ -153,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                             Log.i("JSONRESPONSE", jsonArray.toString());
                             float gabSum = 0;
-
                             for (Double i : gabSumaArr){
                                 gabSum += i;
                             }
@@ -171,5 +168,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         queue.add(stringRequestGab);
+    }
+    public void getTotalSpendings(final VolleyCallBack volleyCallBack){
+        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat dateFormatNoDay = new SimpleDateFormat("yyyy-MM");
+        StringRequest stringRequestTotal = new StringRequest(Request.Method.GET, url + "monthly_spendings/" + dateFormatNoDay.format(Calendar.getInstance().getTime()) + "-01&" + simpleDateFormat.format(Calendar.getInstance().getTime()),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<Double> sumArray = new ArrayList<>();
+                        float sum = 0;
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i = 0; i < jsonArray.length(); i++){
+                                sumArray.add(jsonArray.getJSONObject(i).getDouble("ammount"));
+                            }
+                            for (Double i : sumArray){
+                                sum += i;
+                            }
+                            volleyCallBack.onSuccess(sum);
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        Log.i("Monthly", response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("Error", error.toString());
+            }
+        });
+        queue.add(stringRequestTotal);
     }
 }

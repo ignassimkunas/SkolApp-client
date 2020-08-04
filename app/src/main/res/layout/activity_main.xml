@@ -12,7 +12,7 @@
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="108dp"
-        android:layout_marginTop="170dp">
+        android:layout_marginTop="45dp">
 
         <TextView
             android:id="@+id/textView"
@@ -20,28 +20,85 @@
             android:layout_height="108dp"
             android:fontFamily="@font/solway_bold"
             android:paddingTop="22dp"
-            android:text="56.9"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="80sp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@id/refreshLayout"
+        android:orientation="horizontal"
+        android:paddingLeft="30dp"
+        android:paddingTop="40dp"
+        android:paddingRight="30dp"
+        android:layout_marginTop="50dp">
+
+        <TextView
+            android:id="@+id/monthTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/solway_regular"
+            android:text="This Month:"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/monthSpendLayout"
+        android:layout_width="match_parent"
+        android:layout_height="175dp"
+        android:layout_below="@id/titleLayout"
+        android:orientation="horizontal"
+        android:paddingLeft="30dp"
+        android:paddingTop="20dp"
+        android:paddingRight="30dp">
+
+        <TextView
+            android:id="@+id/thisMonthSpending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/solway_regular"
+            android:text="452.4"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/toPayment"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@+id/refreshLayout"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="280dp"
-        android:layout_marginEnd="25dp"
+        android:layout_width="381dp"
+        android:layout_height="82dp"
+        android:layout_below="@id/monthSpendLayout"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="-3dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="25dp"
         android:background="@drawable/rounded"
         android:fontFamily="@font/solway_bold"
         android:text="Add Payment"
         android:textColor="@android:color/black"
         android:textSize="19sp" />
-
+    <Button
+        android:id="@+id/toSummary"
+        android:layout_width="381dp"
+        android:layout_height="82dp"
+        android:layout_below="@id/toPayment"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="-3dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/rounded"
+        android:fontFamily="@font/solway_bold"
+        android:text="View Summary"
+        android:textColor="@android:color/black"
+        android:textSize="19sp" />
 
 
 </RelativeLayout>

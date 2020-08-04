@@ -38,6 +38,12 @@ public class OnSkolRemoveDialogue extends DialogFragment {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(mainActivity, "Skola sumokėta", Toast.LENGTH_SHORT).show();
+                        mainActivity.updateValue(new VolleyCallBackNoValue() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+                        });
                         dialogInterface.dismiss();
                     }
                 });
