@@ -1,5 +1,5 @@
 package com.example.skolapp;
 
-public interface VolleyCallBackNoValue {
+public interface VolleyCallBackFloatValue {
     void onSuccess();
 }

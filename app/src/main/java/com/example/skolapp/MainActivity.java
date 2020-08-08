@@ -35,19 +35,19 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Double> gabSumaArr;
     DecimalFormat format = new DecimalFormat("0.00");
 
-    //TODO: parodyt kuris menuo(Spendings in August)
     //TODO: padaryt kad rodytu ataskaita pirkiniu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button toPayment = findViewById(R.id.toPayment);
+        Button toSummary = findViewById(R.id.toSummary);
         final SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         skolaView = findViewById(R.id.textView);
         thisMonthSpending = findViewById(R.id.thisMonthSpending);
         currentMonth = findViewById(R.id.monthTitle);
         queue = Volley.newRequestQueue(this);
-        updateValue(new VolleyCallBackNoValue() {
+        updateValue(new VolleyCallBackFloatValue() {
             @Override
             public void onSuccess() {
                 if (Float.parseFloat(skolaView.getText().toString()) < 0){
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateValue(new VolleyCallBackNoValue() {
+                updateValue(new VolleyCallBackFloatValue() {
                     @Override
                     public void onSuccess() {}
                 });
@@ -79,8 +79,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        toSummary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SummaryActivity.class);
+                startActivity(intent);
+            }
+        });
     }
-    public void updateValue(final VolleyCallBackNoValue volleyCallBack){
+    public void updateValue(final VolleyCallBackFloatValue volleyCallBack){
         getSkolIg(new VolleyCallBack() {
             @Override
             public void onSuccess(float value) {

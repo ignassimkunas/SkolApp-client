@@ -34,7 +34,7 @@ public class PaymentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final Double amount = Double.parseDouble(amountView.getText().toString());
                 String description = descriptionView.getText().toString();
-                sendPayment(amount, description, new VolleyCallBackNoValue(){
+                sendPayment(amount, description, new VolleyCallBackFloatValue(){
                     @Override
                     public void onSuccess() {
                         Toast.makeText(PaymentActivity.this, "Added payment of " + amount + " euros", Toast.LENGTH_SHORT).show();
@@ -44,7 +44,7 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
     }
-    public void sendPayment(double ammount, String description, final VolleyCallBackNoValue volleyCallBack){
+    public void sendPayment(double ammount, String description, final VolleyCallBackFloatValue volleyCallBack){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/ignas&" +ammount +'&' + description  ,
                 new Response.Listener<String>() {
                     @Override

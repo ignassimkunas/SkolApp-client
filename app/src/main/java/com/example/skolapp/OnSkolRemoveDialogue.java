@@ -34,11 +34,11 @@ public class OnSkolRemoveDialogue extends DialogFragment {
                 //padaugina is dvieju, kad skaitytusi kaip sumoketa skola
                 final MainActivity mainActivity = (MainActivity)getActivity();
                 assert mainActivity != null;
-                sendPayment(Float.parseFloat(mainActivity.skolaView.getText().toString())* -1 * 2, "skolosgrazinimasandroidapp", new VolleyCallBackNoValue() {
+                sendPayment(Float.parseFloat(mainActivity.skolaView.getText().toString())* -1 * 2, "skolosgrazinimasandroidapp", new VolleyCallBackFloatValue() {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(mainActivity, "Skola sumokėta", Toast.LENGTH_SHORT).show();
-                        mainActivity.updateValue(new VolleyCallBackNoValue() {
+                        mainActivity.updateValue(new VolleyCallBackFloatValue() {
                             @Override
                             public void onSuccess() {
 
@@ -60,7 +60,7 @@ public class OnSkolRemoveDialogue extends DialogFragment {
         return builder.create();
 
     }
-    public void sendPayment(double ammount, String description, final VolleyCallBackNoValue volleyCallBack){
+    public void sendPayment(double ammount, String description, final VolleyCallBackFloatValue volleyCallBack){
         final RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
         final String url = "http://94.237.45.148:1176/";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/ignas&" +ammount +'&' + description  ,
