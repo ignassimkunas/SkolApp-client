@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void getSkolIg(final VolleyCallBack volleyCallBack){
         igSumaArr = new ArrayList<>();
-        StringRequest stringRequestIg = new StringRequest(Request.Method.GET, url + "ignas",
+        StringRequest stringRequestIg = new StringRequest(Request.Method.GET, url + "Ignas",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void getSkolGab(final VolleyCallBack volleyCallBack){
         gabSumaArr = new ArrayList<>();
-        StringRequest stringRequestGab = new StringRequest(Request.Method.GET, url + "gabija",
+        StringRequest stringRequestGab = new StringRequest(Request.Method.GET, url + "Gabija",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

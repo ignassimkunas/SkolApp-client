@@ -7,13 +7,18 @@
     android:orientation="vertical"
     android:background="#72A9E4"
     tools:context=".SummaryActivity">
-
-    <TableLayout
-        android:id="@+id/tableLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="30dp"
-        android:fontFamily="@font/solway_regular"
-        android:gravity="center_horizontal" />
+        android:layout_height="match_parent">
+
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="30dp"
+            android:fontFamily="@font/solway_regular"
+            android:gravity="center_horizontal" />
+
+    </ScrollView>
 
 </LinearLayout>

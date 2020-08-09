@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -32,10 +35,9 @@ public class SummaryActivity extends AppCompatActivity {
     RequestQueue queue;
     final String url = "http://94.237.45.148:1176/";
     TableLayout tableLayout;
-    final int textSize = 18;
-    final int textSizeHeader = 23;
-    final int paddingStart = 29;
-    final int paddingTop = 10;
+    final int textSize = 13;
+    final int textSizeHeader = 24;
+    final int padding = 16;
     DateFormat format;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +79,11 @@ public class SummaryActivity extends AppCompatActivity {
     private void populateTable(JSONArray data){
         TableRow row = new TableRow(this);
         Typeface face = Typeface.createFromAsset(getAssets(), "solway_medium.ttf");
+        Typeface boldFace = Typeface.createFromAsset(getAssets(), "solway_bold.ttf");
         row.setLayoutParams(new TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
                 TableLayout.LayoutParams.WRAP_CONTENT));
+        row.setGravity(Gravity.CENTER);
         TextView tv2 = new TextView(this);
         tv2.setLayoutParams(new TableRow.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
@@ -87,9 +91,9 @@ public class SummaryActivity extends AppCompatActivity {
         tv2.setGravity(Gravity.CENTER);
         tv2.setTextSize(textSizeHeader);
         tv2.setText("User");
-        tv2.setTypeface(face);
+        tv2.setTypeface(boldFace);
         tv2.setTextColor(Color.WHITE);
-        tv2.setPaddingRelative(paddingStart, 0, 0, 0);
+        tv2.setPadding(padding,5,padding,padding);
         row.addView(tv2);
 
         TextView tv3 = new TextView(this);
@@ -99,9 +103,9 @@ public class SummaryActivity extends AppCompatActivity {
         tv3.setGravity(Gravity.CENTER);
         tv3.setTextSize(textSizeHeader);
         tv3.setText("Amount");
-        tv3.setTypeface(face);
+        tv3.setTypeface(boldFace);
+        tv3.setPadding(padding,5,padding,padding);
         tv3.setTextColor(Color.WHITE);
-        tv3.setPaddingRelative(paddingStart, 0, 0, 0);
         row.addView(tv3);
 
         TextView tv4 = new TextView(this);
@@ -111,9 +115,9 @@ public class SummaryActivity extends AppCompatActivity {
         tv4.setGravity(Gravity.CENTER);
         tv4.setTextSize(textSizeHeader);
         tv4.setText("Descr.");
-        tv4.setTypeface(face);
+        tv4.setTypeface(boldFace);
         tv4.setTextColor(Color.WHITE);
-        tv4.setPaddingRelative(paddingStart, 0, 0, 0);
+        tv4.setPadding(padding,5,padding,padding);
         row.addView(tv4);
 
         TextView tv1 = new TextView(this);
@@ -123,9 +127,9 @@ public class SummaryActivity extends AppCompatActivity {
         tv1.setGravity(Gravity.CENTER);
         tv1.setTextSize(textSizeHeader);
         tv1.setText("Date");
-        tv1.setTypeface(face);
+        tv1.setTypeface(boldFace);
         tv1.setTextColor(Color.WHITE);
-        tv1.setPaddingRelative(paddingStart, 0, 0, 0);
+        tv1.setPadding(padding,5,padding,padding);
         row.addView(tv1);
 
         tableLayout.addView(row);
@@ -133,6 +137,7 @@ public class SummaryActivity extends AppCompatActivity {
         for (int i = 0; i < data.length(); i++){
             try{
                 TableRow dataRow = new TableRow(this);
+                dataRow.setGravity(Gravity.CENTER);
                 dataRow.setLayoutParams(new TableLayout.LayoutParams(
                         TableLayout.LayoutParams.MATCH_PARENT,
                         TableLayout.LayoutParams.WRAP_CONTENT));
@@ -145,8 +150,8 @@ public class SummaryActivity extends AppCompatActivity {
                 user.setTextSize(textSize);
                 user.setTypeface(face);
                 user.setTextColor(Color.WHITE);
+                user.setPadding(padding,padding,padding,padding);
                 user.setText(data.getJSONObject(i).getString("user"));
-                user.setPaddingRelative(paddingStart, paddingTop, 0, 0);
                 dataRow.addView(user);
 
                 TextView amount = new TextView(this);
@@ -157,20 +162,20 @@ public class SummaryActivity extends AppCompatActivity {
                 amount.setTextSize(textSize);
                 amount.setTypeface(face);
                 amount.setTextColor(Color.WHITE);
-                amount.setText(Double.toString(data.getJSONObject(i).getDouble("ammount")));
-                amount.setPaddingRelative(paddingStart, paddingTop, 0, 0);
+                amount.setPadding(padding,padding,padding,padding);
+                amount.setText(data.getJSONObject(i).getDouble("ammount") + "€");
                 dataRow.addView(amount);
 
                 TextView description = new TextView(this);
                 description.setLayoutParams(new TableRow.LayoutParams(
                         TableLayout.LayoutParams.MATCH_PARENT,
                         TableLayout.LayoutParams.WRAP_CONTENT));
-                description.setGravity(Gravity.START);
+                description.setGravity(Gravity.CENTER);
                 description.setTextSize(textSize);
                 description.setTypeface(face);
                 description.setTextColor(Color.WHITE);
+                description.setPadding(padding,padding,padding,padding);
                 description.setText(data.getJSONObject(i).getString("description"));
-                description.setPaddingRelative(paddingStart, paddingTop, 0, 0);
                 dataRow.addView(description);
 
                 TextView date = new TextView(this);
@@ -181,8 +186,8 @@ public class SummaryActivity extends AppCompatActivity {
                 date.setTextSize(textSize);
                 date.setTypeface(face);
                 date.setTextColor(Color.WHITE);
+                date.setPadding(padding,padding,padding,padding);
                 date.setText(data.getJSONObject(i).getString("date").substring(0, 10));
-                date.setPaddingRelative(paddingStart, paddingTop, 0, 0);
                 dataRow.addView(date);
                 tableLayout.addView(dataRow);
             }

@@ -45,7 +45,7 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
     public void sendPayment(double ammount, String description, final VolleyCallBackFloatValue volleyCallBack){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/ignas&" +ammount +'&' + description  ,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/Ignas&" +ammount +'&' + description  ,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
