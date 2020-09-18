@@ -3,12 +3,19 @@ package com.example.skolapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,16 +33,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    final String url ="http://94.237.45.148:1176/";
+    String url;
     TextView skolaView;
     TextView thisMonthSpending;
     TextView currentMonth;
     RequestQueue queue;
+    double currentValue;
     ArrayList<Double> igSumaArr;
     ArrayList<Double> gabSumaArr;
     DecimalFormat format = new DecimalFormat("0.00");
 
-    //TODO: padaryt kad rodytu ataskaita pirkiniu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,27 +54,32 @@ public class MainActivity extends AppCompatActivity {
         thisMonthSpending = findViewById(R.id.thisMonthSpending);
         currentMonth = findViewById(R.id.monthTitle);
         queue = Volley.newRequestQueue(this);
-        updateValue(new VolleyCallBackFloatValue() {
+        updateValue(new VolleyCallBack() {
+
             @Override
-            public void onSuccess() {
-                if (Float.parseFloat(skolaView.getText().toString()) < 0){
-                    skolaView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View view) {
-                            OnSkolRemoveDialogue dialogue = new OnSkolRemoveDialogue();
-                            dialogue.show(getSupportFragmentManager(), "RemoveSkol");
-                            return true;
-                        }
-                    });
+            public void onSuccess(final double value) {
+                currentValue = value;
+            }
+        });
+        skolaView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast.makeText(MainActivity.this, Double.toString(currentValue), Toast.LENGTH_SHORT).show();
+                if (currentValue < 0){
+                    OnSkolRemoveDialogue dialogue = new OnSkolRemoveDialogue();
+                    dialogue.show(getSupportFragmentManager(), "RemoveSkol");
                 }
+                return true;
             }
         });
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateValue(new VolleyCallBackFloatValue() {
+                updateValue(new VolleyCallBack() {
                     @Override
-                    public void onSuccess() {}
+                    public void onSuccess(double value) {
+                        currentValue = value;
+                    }
                 });
                 refreshLayout.setRefreshing(false);
             }
@@ -87,30 +99,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void updateValue(final VolleyCallBackFloatValue volleyCallBack){
+    public void updateValue(final VolleyCallBack volleyCallBack){
+        if (getCurrentSsid(this).equals("\"GabAndIg5Ghz\"") || getCurrentSsid(this).equals("\"GabAndIg24Ghz\"") || getCurrentSsid(this).equals("\"GabAndIg\"")){
+            url = "http://192.168.0.45:1176/";
+        }
+        else{
+            url = "http://5.20.217.145:1176/";
+        }
         getSkolIg(new VolleyCallBack() {
             @Override
-            public void onSuccess(float value) {
-                final float igSum = value;
+            public void onSuccess(double value) {
+                final double igSum = value;
                 getSkolGab(new VolleyCallBack() {
                     @Override
-                    public void onSuccess(float value) {
+                    public void onSuccess(double value) {
                         double kof = igSum - value;
                         kof = Math.round(kof * 100.0) / 100.0;
                         skolaView.setText(format.format(kof));
-                        volleyCallBack.onSuccess();
+                        volleyCallBack.onSuccess(kof);
                     }
                 });
             }
         });
         getTotalSpendings(new VolleyCallBack() {
             @Override
-            public void onSuccess(float value) {
+            public void onSuccess(double value) {
                 DateFormat dateFormat = new SimpleDateFormat("MMMM");
                 currentMonth.setText("Spendings in " + dateFormat.format(Calendar.getInstance().getTime()) + ":");
-                thisMonthSpending.setText(Float.toString(value));
+                thisMonthSpending.setText(Double.toString(Math.round(value*100.0)/100.0));
             }
         });
+    }
+    public static String getCurrentSsid(Context context) {
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (networkInfo.isConnected()) {
+            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            return wifiInfo.getSSID();
+        }
+        return null;
     }
     public void getSkolIg(final VolleyCallBack volleyCallBack){
         igSumaArr = new ArrayList<>();

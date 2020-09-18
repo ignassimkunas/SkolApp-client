@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import static com.example.skolapp.MainActivity.getCurrentSsid;
 
 import java.util.Objects;
 
@@ -25,7 +26,6 @@ public class OnSkolRemoveDialogue extends DialogFragment {
     @Override
 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Ar skola sumokėta?");
         builder.setPositiveButton("Taip", new DialogInterface.OnClickListener() {
@@ -34,14 +34,14 @@ public class OnSkolRemoveDialogue extends DialogFragment {
                 //padaugina is dvieju, kad skaitytusi kaip sumoketa skola
                 final MainActivity mainActivity = (MainActivity)getActivity();
                 assert mainActivity != null;
-                sendPayment(Float.parseFloat(mainActivity.skolaView.getText().toString())* -1 * 2, "skolosgrazinimasandroidapp", new VolleyCallBackFloatValue() {
+                sendPayment(mainActivity.currentValue * -1 * 2, "skola", new VolleyCallBackFloatValue() {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(mainActivity, "Skola sumokėta", Toast.LENGTH_SHORT).show();
-                        mainActivity.updateValue(new VolleyCallBackFloatValue() {
+                        mainActivity.updateValue(new VolleyCallBack() {
                             @Override
-                            public void onSuccess() {
-
+                            public void onSuccess(double value) {
+                                mainActivity.currentValue = value;
                             }
                         });
                         dialogInterface.dismiss();
@@ -62,7 +62,13 @@ public class OnSkolRemoveDialogue extends DialogFragment {
     }
     public void sendPayment(double ammount, String description, final VolleyCallBackFloatValue volleyCallBack){
         final RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
-        final String url = "http://94.237.45.148:1176/";
+        String url;
+        if (getCurrentSsid(getContext()).equals("\"GabAndIg5Ghz\"") || getCurrentSsid(getContext()).equals("\"GabAndIg24Ghz\"") || getCurrentSsid(getContext()).equals("\"GabAndIg\"")){
+            url = "http://192.168.0.45:1176/";
+        }
+        else{
+            url = "http://5.20.217.145:1176/";
+        }
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/ignas&" +ammount +'&' + description  ,
                 new Response.Listener<String>() {
                     @Override
