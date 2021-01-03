@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/user"
+        android:enabled="true"
+        android:icon="@drawable/user"
+        android:title="Debt"/>
+    <item
+        android:id="@+id/stats"
+        android:enabled="true"
+        android:icon="@drawable/pie"
+        android:title="Statistics"/>
+</menu>

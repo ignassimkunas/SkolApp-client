@@ -17,21 +17,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import static com.example.skolapp.MainActivity.getCurrentSsid;
-
 public class PaymentActivity extends AppCompatActivity {
     RequestQueue queue;
-    String url;
+    String url = "http://192.168.0.16:1176/";
+    String currentUser = "Ignas";
+    String selectedUser = "Thomas";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
-        if (getCurrentSsid(this).equals("\"GabAndIg5Ghz\"") || getCurrentSsid(this).equals("\"GabAndIg24Ghz\"") || getCurrentSsid(this).equals("\"GabAndIg\"")){
-            url = "http://192.168.0.45:1176/";
-        }
-        else{
-            url = "http://5.20.217.145:1176/";
-        }
         Button addPayment = findViewById(R.id.toPayment);
         final EditText amountView = findViewById(R.id.amount);
         final EditText descriptionView = findViewById(R.id.description);
@@ -53,7 +47,7 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
     public void sendPayment(double ammount, String description, final VolleyCallBackFloatValue volleyCallBack){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/Ignas&" +ammount +'&' + description  ,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "add_payment/"+ currentUser + "&" +ammount +'&' + description + "&" + selectedUser  ,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
