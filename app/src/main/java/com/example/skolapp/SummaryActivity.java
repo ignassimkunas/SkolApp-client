@@ -3,6 +3,7 @@ package com.example.skolapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -39,8 +40,10 @@ import java.text.SimpleDateFormat;
 public class SummaryActivity extends AppCompatActivity {
     RequestQueue queue;
     //add url for results on current user
-    String currentUser = "Ignas";
-    String url = "http://192.168.0.16:1176/" +currentUser;
+    String currentUser;
+
+    String url;
+
     TableLayout tableLayout;
     final int textSize = 13;
     final int textSizeHeader = 24;
@@ -49,6 +52,9 @@ public class SummaryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        currentUser = sharedPreferences.getString("currentUser", "Ignas");
+        url = "http://192.168.0.16:1176/by_name/" +currentUser;
         queue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_summary);
         tableLayout = findViewById(R.id.tableLayout);

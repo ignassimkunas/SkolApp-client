@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StatFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/statisticsView"
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:fontFamily="@font/solway_bold"
+                android:paddingTop="22dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:text="Statistics"
+                android:textSize="45sp" />
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/first_pie_chart"
+                android:layout_width="match_parent"
+                android:layout_height="504dp">
+
+            </com.github.mikephil.charting.charts.PieChart>
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/second_pie_chart"
+                android:layout_width="match_parent"
+                android:layout_height="504dp">
+
+            </com.github.mikephil.charting.charts.PieChart>
+
+        </LinearLayout>
+    </ScrollView>
+
+
 
 </FrameLayout>

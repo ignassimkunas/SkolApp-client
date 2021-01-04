@@ -1,6 +1,8 @@
 package com.example.skolapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -45,8 +47,9 @@ import java.util.Date;
 public class DebtFragment extends Fragment {
 
     String url = "http://192.168.0.16:1176/";
-    public String currentUser = "Ignas";
-    String selectedUser = "Thomas";
+
+
+
     TextView skolaView;
     TextView thisMonthSpending;
     TextView currentMonth;
@@ -96,11 +99,16 @@ public class DebtFragment extends Fragment {
         }
     }
 
+    String currentUser;
+    String selectedUser;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_debt, container, false);
-
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        currentUser = sharedPreferences.getString("currentUser", "Ignas");
+        selectedUser = sharedPreferences.getString("selectedUser", "Kate");
         Button toPayment = view.findViewById(R.id.toPayment);
         Button toSummary = view.findViewById(R.id.toSummary);
         final SwipeRefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
