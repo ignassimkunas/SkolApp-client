@@ -43,7 +43,7 @@ public class StatFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    String url = "http://192.168.0.16:1176/by_month/";
+    String url = "http://5.20.217.145:1176/by_month/";
     String currentUser;
     RequestQueue queue;
 
@@ -93,7 +93,7 @@ public class StatFragment extends Fragment {
         chart.setData(data);
         chart.invalidate();
 
-        chart.setUsePercentValues(true);
+        chart.setUsePercentValues(false);
         chart.getDescription().setEnabled(false);
         chart.setExtraOffsets(5, 10, 5, 5);
 
@@ -123,7 +123,7 @@ public class StatFragment extends Fragment {
     }
 
     public void getMonthData(final VolleyCallBack volleyCallBack, int monthNumber){
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + "11&" + currentUser,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url + monthNumber +"&" + currentUser,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -153,48 +153,34 @@ public class StatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stat, container, false);
-        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         currentUser = sharedPreferences.getString("currentUser", "Ignas");
         final PieChart firstChart = view.findViewById(R.id.first_pie_chart);
-        PieChart secondChart = view.findViewById(R.id.second_pie_chart);
         queue = Volley.newRequestQueue(getActivity());
-
 
         final List<PieEntry> firstEntries = new ArrayList<>();
 
         getMonthData(new VolleyCallBack() {
             @Override
             public void onSuccess(double value) {
-                firstEntries.add(new PieEntry((float) value, "November"));
+                if (value > 0) firstEntries.add(new PieEntry((float) value, "November"));
             }
         }, 11);
 
         getMonthData(new VolleyCallBack() {
             @Override
             public void onSuccess(double value) {
-                firstEntries.add(new PieEntry((float) value, "December"));
+                if (value > 0) firstEntries.add(new PieEntry((float) value, "December"));
             }
         }, 12);
 
         getMonthData(new VolleyCallBack() {
             @Override
             public void onSuccess(double value) {
-                firstEntries.add(new PieEntry((float) value, "January"));
+                if (value > 0) firstEntries.add(new PieEntry((float) value, "January"));
                 createPieChart(firstChart, firstEntries, "Monthly Spendings for " + currentUser);
             }
         }, 1);
-
-
-        List<PieEntry> secondEntries = new ArrayList<>();
-        secondEntries.add(new PieEntry(20.5f, "Green"));
-        secondEntries.add(new PieEntry(9.7f, "Bibis"));
-        secondEntries.add(new PieEntry(4.0f, "Red"));
-        secondEntries.add(new PieEntry(0.8f, "Nene"));
-
-
-        createPieChart(secondChart, secondEntries, "Second");
-
-
 
         return view;
     }

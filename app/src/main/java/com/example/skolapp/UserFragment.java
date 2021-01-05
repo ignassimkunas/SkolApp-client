@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -79,7 +80,7 @@ public class UserFragment extends Fragment {
 
     public void getUsers(final VolleyCallBackList volleyCallBackList){
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String url = "http://192.168.0.16:1176/users";
+        String url = "http://5.20.217.145:1176/users";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -107,38 +108,61 @@ public class UserFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user, container, false);
         final ListView listView = view.findViewById(R.id.listView);
         final ArrayList<String> users = new ArrayList<>();
+        final SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
 
         getUsers(new VolleyCallBackList() {
             @Override
             public void onSuccess(JSONArray list) throws JSONException {
+                final String currentUser = sharedPreferences.getString("currentUser", "Ignas");
                 for (int i = 0; i < list.length(); i++){
-                    users.add(list.getJSONObject(i).getString("user"));
+                    if (!list.getJSONObject(i).getString("user").equals(currentUser)) users.add(list.getJSONObject(i).getString("user"));
                 }
+                //Register user
+                //Add second pie chart
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.white_list, users){
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+
+                        TextView textView = view.findViewById(android.R.id.text1);
+                        String text = (String) textView.getText();
+
+                        String selectedUser = sharedPreferences.getString("selectedUser", "");
+
+                        if (text.equals(selectedUser)){
+                            textView.setTextColor(Color.GREEN);
+                        }
+
+                        return view;
+                    }
+                };
+
+                listView.setAdapter(adapter);
+                listView.setDivider(null);
             }
         });
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.white_list, users){
-            @NonNull
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = view.findViewById(android.R.id.text1);
-                String text = (String) textView.getText();
+                String user = (String) textView.getText();
 
-                SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                String currentUser = sharedPreferences.getString("currentUser", "Ignas");
-
-                if (text.equals(currentUser)){
-                    textView.setTextColor(Color.GREEN);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("selectedUser", user);
+                editor.apply();
+                for (int i = 0; i < listView.getChildCount(); i++){
+                    TextView child = listView.getChildAt(i).findViewById(android.R.id.text1);
+                    if (child.getCurrentTextColor() != Color.WHITE){
+                        child.setTextColor(Color.WHITE);
+                    }
                 }
+                textView.setTextColor(Color.GREEN);
 
-                return view;
             }
-        };
-
-        listView.setAdapter(adapter);
-        listView.setDivider(null);
-
+        });
         return view;
     }
 }

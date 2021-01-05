@@ -23,20 +23,17 @@
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:text="Statistics"
+                android:layout_marginTop="20dp"
                 android:textSize="45sp" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/first_pie_chart"
                 android:layout_width="match_parent"
-                android:layout_height="504dp">
+                android:layout_height="504dp"
+                android:padding="20dp">
 
             </com.github.mikephil.charting.charts.PieChart>
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/second_pie_chart"
-                android:layout_width="match_parent"
-                android:layout_height="504dp">
 
-            </com.github.mikephil.charting.charts.PieChart>
 
         </LinearLayout>
     </ScrollView>

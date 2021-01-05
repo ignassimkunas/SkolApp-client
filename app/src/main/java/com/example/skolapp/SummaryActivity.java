@@ -52,9 +52,10 @@ public class SummaryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences("pref", Context.MODE_PRIVATE);
         currentUser = sharedPreferences.getString("currentUser", "Ignas");
-        url = "http://192.168.0.16:1176/by_name/" +currentUser;
+        url = "http://5.20.217.145:1176/by_name/" + currentUser;
+
         queue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_summary);
         tableLayout = findViewById(R.id.tableLayout);

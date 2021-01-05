@@ -46,7 +46,7 @@ import java.util.Date;
 
 public class DebtFragment extends Fragment {
 
-    String url = "http://192.168.0.16:1176/";
+    String url = "http://5.20.217.145:1176/";
 
 
 
@@ -106,9 +106,9 @@ public class DebtFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_debt, container, false);
-        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         currentUser = sharedPreferences.getString("currentUser", "Ignas");
-        selectedUser = sharedPreferences.getString("selectedUser", "Kate");
+        selectedUser = sharedPreferences.getString("selectedUser", "Thomas");
         Button toPayment = view.findViewById(R.id.toPayment);
         Button toSummary = view.findViewById(R.id.toSummary);
         final SwipeRefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
@@ -248,7 +248,7 @@ public class DebtFragment extends Fragment {
     public void getTotalSpendings(final VolleyCallBack volleyCallBack){
         final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         final DateFormat dateFormatNoDay = new SimpleDateFormat("yyyy-MM");
-        StringRequest stringRequestTotal = new StringRequest(Request.Method.GET, url + "monthly_spendings/" + dateFormatNoDay.format(new Date()) + "-01&" + simpleDateFormat.format(new Date().getTime()) + "&" + currentUser + "&" + selectedUser,
+        StringRequest stringRequestTotal = new StringRequest(Request.Method.GET, url + "monthly_spendings/" + dateFormatNoDay.format(new Date()) + "-01&" + simpleDateFormat.format(new Date().getTime()) + "&" + currentUser,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
